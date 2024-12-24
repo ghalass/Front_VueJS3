@@ -21,13 +21,15 @@ onMounted(() => errors.value = {})
         <form @submit.prevent="authenticate('login', formData)">
 
             <div class="form-floating mb-2">
-                <input v-model="formData.email" type="email" class="form-control" id="floatingInputEmail">
+                <input v-model="formData.email" type="email" class="form-control" id="floatingInputEmail"
+                    placeholder="Email">
                 <label for="floatingInputEmail">Email</label>
                 <p v-if="errors.email" class="text-danger text-sm fst-italic"><small>{{ errors.email[0] }}</small></p>
             </div>
 
             <div class="form-floating mb-2">
-                <input v-model="formData.password" type="password" class="form-control" id="floatingPassword">
+                <input v-model="formData.password" type="password" class="form-control" id="floatingPassword"
+                    placeholder="Mot de passe">
                 <label for="floatingPassword">Mot de passe</label>
                 <p v-if="errors.password" class="text-danger text-sm fst-italic"><small>{{ errors.password[0] }}</small>
                 </p>

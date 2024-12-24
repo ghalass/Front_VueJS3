@@ -1,22 +1,39 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth';
 import { usePostsStore } from '@/stores/posts';
 import { storeToRefs } from 'pinia';
-import { reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
+const router = useRouter()
+const route = useRoute()
+const { user } = storeToRefs(useAuthStore())
 const { errors } = storeToRefs(usePostsStore());
 const { createPost } = usePostsStore()
+const { getPost, updatePost } = usePostsStore()
+const post = ref(null)
 
 const formData = reactive({
     title: '',
     body: '',
 });
 
+onMounted(async () => {
+    post.value = await getPost(route.params.id)
+    if (user.value.id !== post.value.user_id) {
+        router.push({ name: 'home' })
+    } else {
+        formData.title = post.value.title
+        formData.body = post.value.body
+    }
+})
+
 </script>
 
 <template>
     <main class="container mt-5" style="max-width: 450px;">
-        <h1 class="text-center">Create a new post</h1>
-        <form @submit.prevent="createPost(formData)">
+        <h1 class="text-center">Update a post</h1>
+        <form @submit.prevent="updatePost(post, formData)">
 
             <div class="form-floating mb-2">
                 <input v-model="formData.title" type="text" class="form-control" id="floatingInputTitle"
@@ -35,7 +52,7 @@ const formData = reactive({
 
             <div class="form-floating d-grid mb-2">
                 <button class="btn btn-outline-primary">
-                    Create
+                    Update
                 </button>
             </div>
 

@@ -57,7 +57,7 @@ const authStore = useAuthStore()
               </ul>
 
             </li>
-            <div v-else class="d-flex">
+            <div v-else class="d-flex gap-1">
               <RouterLink :to="{ name: 'login' }" class="nav-link">
                 Login
               </RouterLink>
