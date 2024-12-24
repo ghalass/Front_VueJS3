@@ -1,29 +1,22 @@
-# vue-project
+# laravel new Api_Laravel
 
-This template should help get you started developing with Vue 3 in Vite.
+# php artisan install:api
 
-## Recommended IDE Setup
+- install sanctum
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+# php artisan make:model Post -a --api
 
-## Customize configuration
+- for creating : model, factory, migration, seeder, request, controller policy
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+# php artisan migrate
 
-## Project Setup
+# php artisan make:controller AuthController
 
-```sh
-npm install
-```
+# npm create vue@latest
 
-### Compile and Hot-Reload for Development
+# npm install bootstrap@5
 
-```sh
-npm run dev
-```
+# npm install @popperjs/core
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+- main.css => @import 'bootstrap/dist/css/bootstrap.css';
+- main.js => import \* as bootstrap from 'bootstrap/dist/js/bootstrap.bundle';

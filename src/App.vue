@@ -1,85 +1,80 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { useAuthStore } from './stores/auth';
+import { onMounted } from 'vue';
+
+const authStore = useAuthStore()
+
 </script>
 
 <template>
+
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <nav class="navbar navbar-expand-md bg-body-tertiary shadow-sm">
+      <div class="container-fluid">
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+        <RouterLink :to="{ name: 'home' }" class="navbar-brand">
+          APP
+        </RouterLink>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+        <RouterLink :to="{ name: 'create' }" class="nav-link active">
+          New Post
+        </RouterLink>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <!-- <li class="nav-item">
+
+              <RouterLink :to="{ name: 'home' }" class="nav-link active">
+                Home
+              </RouterLink>
+
+            </li> -->
+            <li v-if="authStore.user" class="nav-item dropdown">
+
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <span>Welcome {{ authStore.user.name }}</span>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li>
+
+                  <form @submit.prevent="authStore.logout">
+                    <button class="dropdown-item">Logout</button>
+                  </form>
+
+                </li>
+              </ul>
+
+            </li>
+            <div v-else class="d-flex">
+              <RouterLink :to="{ name: 'login' }" class="nav-link">
+                Login
+              </RouterLink>
+              <RouterLink :to="{ name: 'register' }" class="nav-link">
+                Register
+              </RouterLink>
+            </div>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+
   </header>
 
-  <RouterView />
+  <div class="container">
+    <RouterView />
+  </div>
+
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
