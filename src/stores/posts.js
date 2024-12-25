@@ -1,9 +1,6 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
-// import axios from "axios";
 import { API } from "@/utils";
-
-// axios.defaults.baseURL = "https://apiposts.ghalass.com"
 
 export const usePostsStore = defineStore('postsStore', {
     state: () => {
@@ -14,21 +11,25 @@ export const usePostsStore = defineStore('postsStore', {
     actions: {
         /************ Get all posts ************/
         async getAllPosts() {
-            const res = await fetch(`${API}/api/posts`);
+            const res = await fetch(`${API}/api/posts`, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                }
+            });
             const data = await res.json();
             return data
-
-            // const res = await axios.get(`/api/posts`);
-            // return res.data;
         },
         /************* Get a post **************/
         async getPost(post) {
-            const res = await fetch(`${API}/api/posts/${post}`);
+            const res = await fetch(`${API}/api/posts/${post}`, {
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                }
+            });
             const data = await res.json();
             return data.post
-
-            // const res = await axios.get(`/api/posts/${post}`);
-            // return res.data;
         },
         /************ Create a post ************/
         async createPost(formData) {
@@ -36,14 +37,12 @@ export const usePostsStore = defineStore('postsStore', {
                 method: 'post',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(formData),
             });
             const data = await res.json();
-
-            // const res = await axios.post(`/api/posts`, { formData });
-            // const data = res.data
-
             if (data.errors) {
                 this.errors = data.errors;
             } else {
@@ -59,6 +58,8 @@ export const usePostsStore = defineStore('postsStore', {
                     method: 'delete',
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
                     }
                 });
                 const data = await res.json();
@@ -78,6 +79,8 @@ export const usePostsStore = defineStore('postsStore', {
                     method: 'put',
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify(formData),
                 });
