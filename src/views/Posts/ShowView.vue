@@ -35,8 +35,6 @@ onMounted(async () => (post.value = await getPost(route.params.id)))
             </RouterLink>
         </div>
 
-
-        <td></td>
     </div>
     <div v-else>
         Post Not Found!
