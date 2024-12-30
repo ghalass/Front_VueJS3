@@ -76,7 +76,7 @@ const authStore = useAuthStore();
     </nav>
   </header>
 
-  <div class="container">
+  <div class="container-fluid">
     <div class="mt-2">
       <ul class="nav nav-tabs">
         <li class="nav-item">

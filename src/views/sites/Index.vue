@@ -13,6 +13,13 @@
         >
           Add
         </RouterLink> -->
+
+          <button
+            @click="selectSite(site, 'create')"
+            class="btn btn-sm btn-outline-info float-end"
+          >
+            <i class="bi bi-plus-lg"></i>
+          </button>
         </div>
         <div class="card-body">
           <table class="table table-sm table-hover">
@@ -75,12 +82,15 @@
       </div>
     </div>
 
+    <!-- CRUD CARD -->
     <div class="col-sm-4">
       <div v-if="operation !== ''" class="card mt-2">
         <div class="card-header text-uppercase">
           <i class="bi bi-align-self-start"></i>
           créer/modifier un SITE
         </div>
+
+        <!-- EDIT/CREATE -->
         <div class="card-body">
           <div v-if="operation !== 'delete'">
             <div class="form-floating mb-3">
@@ -140,27 +150,30 @@
               </button>
             </div>
           </div>
+
+          <!-- SUPPRSSION -->
           <div v-else>
-            <div class="d-flex align-items-center gap-2">
+            <div class="">
               <h6 class="text-danger d-inline">
                 <i class="bi bi-trash"></i> Voulez-vous supprimer le site
                 <span class="text-bg-info px-2">{{ site.name }}</span> ?
               </h6>
-              <div class="d-flex gap-2">
-                <button
-                  @click="selectSite(site, '')"
-                  class="btn btn-sm btn-outline-success"
-                >
-                  Non, annuler
-                </button>
-                <button
-                  @click="selectSite(site, 'delete')"
-                  class="btn btn-sm btn-outline-danger"
-                >
-                  Oui, supprimer
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
+            </div>
+            <div class="d-flex gap-2 mt-1">
+              <button
+                @click="selectSite(site, '')"
+                class="btn btn-sm btn-outline-success"
+              >
+                Non
+                <i class="bi bi"></i>
+              </button>
+              <button
+                @click="deleteSite(site.id)"
+                class="btn btn-sm btn-outline-danger"
+              >
+                <i class="bi bi-trash"></i>
+                Oui
+              </button>
             </div>
           </div>
         </div>
@@ -172,7 +185,11 @@
 <script setup>
 import { API } from "@/utils";
 import axios from "axios";
+
 import { onMounted, ref } from "vue";
+
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 const sites = ref([]);
 const site = ref({
@@ -239,6 +256,16 @@ const createSite = () => {
       errors.value.name = "";
       errors.value.description = "";
       selectSite(site, "");
+      toast.success("Ajouté avec succès !", {
+        autoClose: 2000,
+        position: toast.POSITION.BOTTOM_LEFT,
+        // warn info error success
+        // position: toast.POSITION.TOP_CENTER,
+        // position: toast.POSITION.TOP_LEFT,
+        // position: toast.POSITION.BOTTOM_LEFT,
+        // position: toast.POSITION.BOTTOM_CENTER,
+        // position: toast.POSITION.BOTTOM_RIGHT,
+      });
     })
     .catch((error) => {
       errors.value.name = "";
@@ -284,6 +311,17 @@ const updateSite = () => {
       errors.value.name = "";
       errors.value.description = "";
       selectSite(site, "");
+
+      toast.success("Modifié avec succès !", {
+        autoClose: 2000,
+        position: toast.POSITION.BOTTOM_LEFT,
+        // warn info error success
+        // position: toast.POSITION.TOP_CENTER,
+        // position: toast.POSITION.TOP_LEFT,
+        // position: toast.POSITION.BOTTOM_LEFT,
+        // position: toast.POSITION.BOTTOM_CENTER,
+        // position: toast.POSITION.BOTTOM_RIGHT,
+      });
     })
     .catch((error) => {
       errors.value.name = "";
@@ -310,24 +348,31 @@ const updateSite = () => {
 };
 
 const deleteSite = (id) => {
-  if (confirm("Voulez-vous supprimer ce site?")) {
-    const url = `${API}/sites/${id}`;
-
-    axios
-      .delete(url, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("token")}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        getSites();
-        selectSite(site, "");
-      })
-      .catch((error) => {
-        console.log(error);
+  const url = `${API}/sites/${id}`;
+  axios
+    .delete(url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("token")}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      getSites();
+      selectSite(site, "");
+      toast.info("Supprimé avec succès !", {
+        autoClose: 2000,
+        position: toast.POSITION.BOTTOM_LEFT,
+        // warn info error success
+        // position: toast.POSITION.TOP_CENTER,
+        // position: toast.POSITION.TOP_LEFT,
+        // position: toast.POSITION.BOTTOM_LEFT,
+        // position: toast.POSITION.BOTTOM_CENTER,
+        // position: toast.POSITION.BOTTOM_RIGHT,
       });
-  }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 </script>
