@@ -11,7 +11,7 @@ export const usePostsStore = defineStore('postsStore', {
     actions: {
         /************ Get all posts ************/
         async getAllPosts() {
-            const res = await fetch(`${API}/api/posts`, {
+            const res = await fetch(`${API}/posts`, {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export const usePostsStore = defineStore('postsStore', {
         },
         /************* Get a post **************/
         async getPost(post) {
-            const res = await fetch(`${API}/api/posts/${post}`, {
+            const res = await fetch(`${API}/posts/${post}`, {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export const usePostsStore = defineStore('postsStore', {
         },
         /************ Create a post ************/
         async createPost(formData) {
-            const res = await fetch(`${API}/api/posts`, {
+            const res = await fetch(`${API}/posts`, {
                 method: 'post',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -54,7 +54,7 @@ export const usePostsStore = defineStore('postsStore', {
         async deletePost(post) {
             const authStore = useAuthStore()
             if (authStore.user.id === post.user_id) {
-                const res = await fetch(`${API}/api/posts/${post.id}`, {
+                const res = await fetch(`${API}/posts/${post.id}`, {
                     method: 'delete',
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -75,7 +75,7 @@ export const usePostsStore = defineStore('postsStore', {
         async updatePost(post, formData) {
             const authStore = useAuthStore()
             if (authStore.user.id === post.user_id) {
-                const res = await fetch(`${API}/api/posts/${post.id}`, {
+                const res = await fetch(`${API}/posts/${post.id}`, {
                     method: 'put',
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,

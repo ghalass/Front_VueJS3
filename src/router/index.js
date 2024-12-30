@@ -6,6 +6,10 @@ import { useAuthStore } from '@/stores/auth'
 import CreateView from '@/views/Posts/CreateView.vue'
 import ShowView from '@/views/Posts/ShowView.vue'
 import UpdateView from '@/views/Posts/UpdateView.vue'
+import SitesView from '@/views/sites/Index.vue'
+import SitesCreate from '@/views/sites/Create.vue'
+import SitesEdit from '@/views/sites/Edit.vue'
+import SitesDelete from '@/views/sites/Delete.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +48,26 @@ const router = createRouter({
       name: 'update',
       component: UpdateView,
       meta: { auth: true },
+    }, {
+      path: '/sites',
+      name: 'sites',
+      component: SitesView,
+      // meta: { auth: true },
+    }, {
+      path: '/sites/create',
+      name: 'sitesCreate',
+      component: SitesCreate,
+      // meta: { auth: true },
+    }, {
+      path: '/sites/:id/edit',
+      name: 'sitesEdit',
+      component: SitesEdit,
+      // meta: { auth: true },
+    }, {
+      path: '/sites/:id/delete',
+      name: 'sitesDelete',
+      component: SitesDelete,
+      // meta: { auth: true },
     },
   ],
 })

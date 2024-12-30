@@ -1,18 +1,15 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { useAuthStore } from './stores/auth';
-import { onMounted } from 'vue';
+import { RouterLink, RouterView } from "vue-router";
+import { useAuthStore } from "./stores/auth";
+import { onMounted } from "vue";
 
-const authStore = useAuthStore()
-
+const authStore = useAuthStore();
 </script>
 
 <template>
-
   <header>
     <nav class="navbar navbar-expand-md bg-body-tertiary shadow-sm">
       <div class="container-fluid">
-
         <RouterLink :to="{ name: 'home' }" class="navbar-brand">
           APP
         </RouterLink>
@@ -21,8 +18,15 @@ const authStore = useAuthStore()
           New Post
         </RouterLink>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -35,9 +39,13 @@ const authStore = useAuthStore()
 
             </li> -->
             <li v-if="authStore.user" class="nav-item dropdown">
-
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
                 <span>Welcome {{ authStore.user.name }}</span>
               </a>
 
@@ -45,17 +53,14 @@ const authStore = useAuthStore()
                 <li><a class="dropdown-item" href="#">Profile</a></li>
                 <li><a class="dropdown-item" href="#">Another action</a></li>
                 <li>
-                  <hr class="dropdown-divider">
+                  <hr class="dropdown-divider" />
                 </li>
                 <li>
-
                   <form @submit.prevent="authStore.logout">
                     <button class="dropdown-item">Logout</button>
                   </form>
-
                 </li>
               </ul>
-
             </li>
             <div v-else class="d-flex gap-1">
               <RouterLink :to="{ name: 'login' }" class="nav-link">
@@ -66,15 +71,58 @@ const authStore = useAuthStore()
               </RouterLink>
             </div>
           </ul>
-
         </div>
       </div>
     </nav>
-
   </header>
 
   <div class="container">
+    <div class="mt-2">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'sites' }" class="nav-link active">
+            Sites
+          </RouterLink>
+        </li>
+
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Types parc
+          </RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Parcs
+          </RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Engins
+          </RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Type lubrifiants
+          </RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Lubrifiants
+          </RouterLink>
+        </li>
+        <!-- <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Saisie HRM
+          </RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink :to="{ name: 'home' }" class="nav-link">
+            Saisie HIM
+          </RouterLink>
+        </li> -->
+      </ul>
+    </div>
+
     <RouterView />
   </div>
-
 </template>

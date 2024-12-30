@@ -1,6 +1,8 @@
 import './assets/main.css'
 import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
 
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import { createApp, markRaw } from 'vue'
 import { createPinia } from 'pinia'
 
