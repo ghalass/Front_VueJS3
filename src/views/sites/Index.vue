@@ -1,75 +1,59 @@
 <template>
-  <div class="row">
+  <div>
     <!-- TABLE -->
-    <div class="col-sm-8">
-      <div class="card mt-2">
-        <div class="card-header text-uppercase">
-          <i class="bi bi-list"></i>
-          liste des sites
+    <div class="card">
+      <div class="card-header text-uppercase">
+        <div class="d-flex justify-content-between">
+          <div class=""><i class="bi bi-list"></i> liste des sites</div>
 
-          <!-- <RouterLink
-          to="/sites/create"
-          class="btn btn-sm btn-outline-info float-end"
-        >
-          Add
-        </RouterLink> -->
+          <span
+            v-if="processing"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
 
-          <button
-            @click="selectSite(site, 'create')"
-            class="btn btn-sm btn-outline-info float-end"
-          >
-            <i class="bi bi-plus-lg"></i>
-          </button>
+          <div class="d-flex gap-2">
+            <button
+              @click="selectSite('', 'create')"
+              class="btn btn-sm btn-outline-success"
+            >
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
         </div>
-        <div class="card-body">
+      </div>
+      <div class="card-body">
+        <div>
           <table class="table table-sm table-hover">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">Site</th>
-                <th scope="col">description</th>
-                <!-- <th scope="col">created_at</th>
-              <th scope="col">updated_at</th> -->
-                <th scope="col"></th>
+                <th style="width: 10px">Action</th>
+                <!-- <th style="width: 20px">#ID</th> -->
+                <th>Site</th>
+                <th>description</th>
               </tr>
             </thead>
             <tbody v-if="sites.length > 0">
               <tr v-for="(site, index) in sites" :key="index">
-                <td>{{ site.id }}</td>
-                <td>{{ site.name }}</td>
-                <td>{{ site.description }}</td>
-                <!-- <td>{{ site.created_at }}</td>
-              <td>{{ site.updated_at }}</td> -->
-                <td class="">
-                  <div class="d-flex gap-1 float-end">
-                    <!-- <RouterLink
-                    :to="{ path: '/sites/' + site.id + '/edit' }"
-                    class="btn btn-sm btn-outline-info"
-                  >
-                    Edit
-                  </RouterLink> -->
-
-                    <!-- <button
-                    @click="deleteSite(site.id)"
-                    class="btn btn-sm btn-outline-danger"
-                  >
-                    Delete
-                  </button> -->
-
-                    <button
-                      @click="selectSite(site, 'edit')"
-                      class="btn btn-sm btn-outline-info"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button
+                <td>
+                  <div class="d-flex gap-3 float-end mx-2">
+                    <i
                       @click="selectSite(site, 'delete')"
-                      class="btn btn-sm btn-outline-danger"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
+                      role="button"
+                      class="bi bi-trash text text-sm text-danger pointer-events"
+                    ></i>
+
+                    <i
+                      @click="selectSite(site, 'edit')"
+                      role="button"
+                      class="bi bi-pencil text text-sm text-info pointer-events"
+                    ></i>
                   </div>
                 </td>
+                <!-- <td>{{ site.id }}</td> -->
+                <td>{{ site.name }}</td>
+                <td>{{ site.description }}</td>
               </tr>
             </tbody>
             <tbody v-else>
@@ -80,19 +64,54 @@
           </table>
         </div>
       </div>
+      <div class="card-footer">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination mb-0">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">«</span>
+              </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">»</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
 
-    <!-- CRUD CARD -->
-    <div class="col-sm-4">
-      <div v-if="operation !== ''" class="card mt-2">
-        <div class="card-header text-uppercase">
-          <i class="bi bi-align-self-start"></i>
-          créer/modifier un SITE
-        </div>
-
-        <!-- EDIT/CREATE -->
-        <div class="card-body">
-          <div v-if="operation !== 'delete'">
+    <!-- MODAL -->
+    <div
+      class="modal fade"
+      id="verticalycentered"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      style="display: none"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <span v-if="operation === 'create'"> Ajout</span>
+              <span v-if="operation === 'delete'"> Suppression </span>
+              <span v-if="operation === 'edit'"> Modification </span>
+            </h5>
+            <button
+              @click="closeModal"
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              :class="{ disabled: processing }"
+            ></button>
+          </div>
+          <div class="modal-body">
             <div class="form-floating mb-3">
               <input
                 v-model="site.name"
@@ -103,7 +122,10 @@
                 placeholder="site name"
               />
               <label for="floatingInput">Site</label>
-              <span v-if="errors.name !== ''" class="text-danger fst-italic">
+              <span
+                v-if="errors.name !== ''"
+                class="text-danger fst-italic fw-light"
+              >
                 {{ errors.name }}
               </span>
             </div>
@@ -119,62 +141,48 @@
               <label for="floatingTextarea">Description</label>
               <span
                 v-if="errors.description !== ''"
-                class="text-danger fst-italic"
+                class="text-danger fst-italic fw-light"
               >
                 {{ errors.description }}
               </span>
             </div>
-
-            <div class="d-flex gap-1 float-end">
-              <!-- <button
-            type="button"
-            class="btn btn-sm btn-outline-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button> -->
-
-              <button
-                @click="selectSite(site, '')"
-                class="btn btn-sm btn-outline-success"
-              >
-                Annuler
-              </button>
-              <button
-                @click="save"
-                type="button"
-                class="btn btn-sm btn-outline-primary"
-              >
-                <i class="bi bi-floppy"></i>
-                Save
-              </button>
-            </div>
           </div>
+          <div class="modal-footer">
+            <button
+              @click="closeModal"
+              class="btn btn-sm btn-outline-secondary"
+              :class="{ disabled: processing }"
+            >
+              Annuler
+            </button>
+            <button
+              @click="soumettre"
+              type="button"
+              class="btn btn-sm"
+              :class="{
+                'btn-outline-success': operation === 'create',
+                'btn-outline-danger': operation === 'delete',
+                'btn-outline-info': operation === 'edit',
+                disabled: processing,
+              }"
+            >
+              <span
+                v-if="processing"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
 
-          <!-- SUPPRSSION -->
-          <div v-else>
-            <div class="">
-              <h6 class="text-danger d-inline">
-                <i class="bi bi-trash"></i> Voulez-vous supprimer le site
-                <span class="text-bg-info px-2">{{ site.name }}</span> ?
-              </h6>
-            </div>
-            <div class="d-flex gap-2 mt-1">
-              <button
-                @click="selectSite(site, '')"
-                class="btn btn-sm btn-outline-success"
+              <span v-if="operation === 'create'">
+                <i v-if="!processing" class="bi bi-plus-lg"></i> Ajouter</span
               >
-                Non
-                <i class="bi bi"></i>
-              </button>
-              <button
-                @click="deleteSite(site.id)"
-                class="btn btn-sm btn-outline-danger"
-              >
-                <i class="bi bi-trash"></i>
-                Oui
-              </button>
-            </div>
+              <span v-if="operation === 'delete'">
+                <i v-if="!processing" class="bi bi-trash"></i> Supprimer
+              </span>
+              <span v-if="operation === 'edit'">
+                <i v-if="!processing" class="bi bi-floppy"></i> Modifier
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -183,13 +191,11 @@
 </template>
 
 <script setup>
-import { API } from "@/utils";
+import { onMounted, onUpdated, ref } from "vue";
 import axios from "axios";
-
-import { onMounted, ref } from "vue";
-
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { API } from "@/utils";
 
 const sites = ref([]);
 const site = ref({
@@ -202,17 +208,28 @@ const errors = ref({
   description: "",
 });
 const operation = ref("");
+const delay = 2000; // 0.5 seconds
+const processing = ref(false);
 
 onMounted(() => {
-  getSites();
+  processing.value = true;
+  setTimeout(() => {
+    getSites();
+  }, delay);
+});
+
+onUpdated(() => {
+  // console.log("onUpdated");
 });
 
 const getSites = () => {
   const url = `${API}/sites`;
+
   axios
     .get(url)
     .then((res) => {
       sites.value = res.data;
+      processing.value = false;
       // console.log(res);
     })
     .catch((error) => {
@@ -222,19 +239,36 @@ const getSites = () => {
 
 const selectSite = (selectedSite, op) => {
   operation.value = op;
-  if (op !== "") {
-    site.value = selectedSite;
-  } else {
+  if (op === "create") {
     site.value = {
+      id: "",
       name: "",
       description: "",
     };
+  } else {
+    site.value = selectedSite;
   }
+  openModal();
 };
 
-const save = () => {
-  if (site.value.id === "") createSite();
-  else updateSite();
+const soumettre = () => {
+  processing.value = true;
+  setTimeout(() => {
+    switch (operation.value) {
+      case "create":
+        createSite();
+        break;
+      case "edit":
+        updateSite();
+        break;
+      case "delete":
+        deleteSite();
+        break;
+      default:
+        break;
+    }
+    processing.value = false;
+  }, delay);
 };
 
 const createSite = () => {
@@ -253,9 +287,7 @@ const createSite = () => {
         description: "",
       };
       getSites();
-      errors.value.name = "";
-      errors.value.description = "";
-      selectSite(site, "");
+      closeModal();
       toast.success("Ajouté avec succès !", {
         autoClose: 2000,
         position: toast.POSITION.BOTTOM_LEFT,
@@ -272,6 +304,7 @@ const createSite = () => {
       errors.value.description = "";
 
       if (error.response) {
+        // 422 : data no valid
         if (error.response.status === 422) {
           if (error.response.data.errors.name) {
             errors.value.name = error.response.data.errors.name[0];
@@ -280,6 +313,11 @@ const createSite = () => {
             errors.value.description =
               error.response.data.errors.description[0];
           }
+          // 401 : Unauthorized
+        } else if (error.response.status === 401) {
+          console.log(error.response.data.message);
+
+          errors.value.name = error.response.data.message;
         } else {
           console.log(error.response);
         }
@@ -308,10 +346,7 @@ const updateSite = () => {
         description: "",
       };
       getSites();
-      errors.value.name = "";
-      errors.value.description = "";
-      selectSite(site, "");
-
+      closeModal();
       toast.success("Modifié avec succès !", {
         autoClose: 2000,
         position: toast.POSITION.BOTTOM_LEFT,
@@ -328,6 +363,9 @@ const updateSite = () => {
       errors.value.description = "";
 
       if (error.response) {
+        // 422 : data no valid
+        console.log(error.response.status);
+
         if (error.response.status === 422) {
           if (error.response.data.errors.name) {
             errors.value.name = error.response.data.errors.name[0];
@@ -336,6 +374,11 @@ const updateSite = () => {
             errors.value.description =
               error.response.data.errors.description[0];
           }
+          // 401 : Unauthorized
+        } else if (error.response.status === 401) {
+          console.log(error.response.data.message);
+
+          errors.value.name = error.response.data.message;
         } else {
           console.log(error.response);
         }
@@ -347,8 +390,8 @@ const updateSite = () => {
     });
 };
 
-const deleteSite = (id) => {
-  const url = `${API}/sites/${id}`;
+const deleteSite = () => {
+  const url = `${API}/sites/${site.value.id}`;
   axios
     .delete(url, {
       headers: {
@@ -359,7 +402,7 @@ const deleteSite = (id) => {
     })
     .then((res) => {
       getSites();
-      selectSite(site, "");
+      closeModal();
       toast.info("Supprimé avec succès !", {
         autoClose: 2000,
         position: toast.POSITION.BOTTOM_LEFT,
@@ -374,5 +417,33 @@ const deleteSite = (id) => {
     .catch((error) => {
       console.log(error);
     });
+};
+
+const openModal = () => {
+  const myModal = new bootstrap.Modal(
+    document.getElementById("verticalycentered")
+  );
+  myModal.show();
+};
+
+const closeModal = () => {
+  // set default operation to create
+  operation.value = "create";
+  // reset form
+  site.value = {
+    id: "",
+    name: "",
+    description: "",
+  };
+  // reset errors
+  errors.value = {
+    name: "",
+    description: "",
+  };
+  // close modal
+  const myModal = bootstrap.Modal.getInstance(
+    document.getElementById("verticalycentered")
+  );
+  myModal.hide();
 };
 </script>

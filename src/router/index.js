@@ -6,10 +6,13 @@ import { useAuthStore } from '@/stores/auth'
 import CreateView from '@/views/Posts/CreateView.vue'
 import ShowView from '@/views/Posts/ShowView.vue'
 import UpdateView from '@/views/Posts/UpdateView.vue'
-import SitesView from '@/views/sites/Index.vue'
-import SitesCreate from '@/views/sites/Create.vue'
-import SitesEdit from '@/views/sites/Edit.vue'
-import SitesDelete from '@/views/sites/Delete.vue'
+import SitesCreate from '@/views/Sites/Create.vue'
+import SitesEdit from '@/views/Sites/Edit.vue'
+import SitesDelete from '@/views/Sites/Delete.vue'
+// CONFIGS
+import SitesView from '@/views/Sites/Index.vue'
+import TypeparcsView from '@/views/Typeparcs/Index.vue'
+import ParcsView from '@/views/Parcs/Index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,11 +52,6 @@ const router = createRouter({
       component: UpdateView,
       meta: { auth: true },
     }, {
-      path: '/sites',
-      name: 'sites',
-      component: SitesView,
-      // meta: { auth: true },
-    }, {
       path: '/sites/create',
       name: 'sitesCreate',
       component: SitesCreate,
@@ -67,6 +65,24 @@ const router = createRouter({
       path: '/sites/:id/delete',
       name: 'sitesDelete',
       component: SitesDelete,
+      // meta: { auth: true },
+    },
+
+    // CONFIGS
+    {
+      path: '/configs/sites',
+      name: 'sites',
+      component: SitesView,
+      meta: { auth: true },
+    }, {
+      path: '/configs/typeparcs',
+      name: 'typeparcs',
+      component: TypeparcsView,
+      // meta: { auth: true },
+    }, {
+      path: '/configs/parcs',
+      name: 'parcs',
+      component: ParcsView,
       // meta: { auth: true },
     },
   ],

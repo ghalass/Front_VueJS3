@@ -1,13 +1,79 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
 import { useAuthStore } from "./stores/auth";
 import { onMounted } from "vue";
+import { toggleBodyClass } from "./utils";
+import Sidebar from "./components/Sidebar.vue";
+import Navbar from "./components/Navbar.vue";
+import Footer from "./components/Footer.vue";
 
 const authStore = useAuthStore();
+
+const toggleBodyClassHandler = () => {
+  toggleBodyClass("toggle-sidebar");
+};
 </script>
 
 <template>
-  <header>
+  <div class="">
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <RouterLink
+          :to="{ name: 'home' }"
+          class="logo d-flex align-items-center"
+        >
+          <img src="./assets/img/logo.png" alt="logo" />
+          <span class="d-none d-lg-block">APP</span>
+        </RouterLink>
+        <i
+          @click="toggleBodyClassHandler"
+          class="bi bi-list toggle-sidebar-btn"
+        ></i>
+      </div>
+
+      <div class="search-bar">
+        <form
+          class="search-form d-flex align-items-center"
+          method="POST"
+          action="#"
+        >
+          <input
+            type="text"
+            name="query"
+            placeholder="Search"
+            title="Enter search keyword"
+          />
+          <button type="submit" title="Search">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <Navbar />
+    </header>
+
+    <Sidebar />
+
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>Blank Page</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item">Pages</li>
+            <li class="breadcrumb-item active">Blank</li>
+          </ol>
+        </nav>
+      </div>
+
+      <section class="section">
+        <RouterView />
+      </section>
+    </main>
+
+    <Footer></Footer>
+  </div>
+
+  <!-- <header>
     <nav class="navbar navbar-expand-md bg-body-tertiary shadow-sm">
       <div class="container-fluid">
         <RouterLink :to="{ name: 'home' }" class="navbar-brand">
@@ -31,13 +97,6 @@ const authStore = useAuthStore();
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <!-- <li class="nav-item">
-
-              <RouterLink :to="{ name: 'home' }" class="nav-link active">
-                Home
-              </RouterLink>
-
-            </li> -->
             <li v-if="authStore.user" class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -110,19 +169,9 @@ const authStore = useAuthStore();
             Lubrifiants
           </RouterLink>
         </li>
-        <!-- <li class="nav-item">
-          <RouterLink :to="{ name: 'home' }" class="nav-link">
-            Saisie HRM
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink :to="{ name: 'home' }" class="nav-link">
-            Saisie HIM
-          </RouterLink>
-        </li> -->
       </ul>
     </div>
 
     <RouterView />
-  </div>
+  </div> -->
 </template>
