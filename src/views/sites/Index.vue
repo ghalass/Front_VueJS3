@@ -125,7 +125,6 @@
               :class="{ disabled: processing }"
             ></button>
           </div>
-          <!--:validation-schema="schema" v-slot="{ errors }"-->
           <form @submit="submitForm">
             <div class="modal-body">
               <div class="form-floating mb-3">
@@ -161,6 +160,8 @@
                   }"
                   placeholder="Desc"
                   id="floatingTextarea"
+                  rows="4"
+                  style="height: 100%"
                 />
                 <label for="floatingTextarea">Description</label>
                 <span
