@@ -125,79 +125,91 @@
               :class="{ disabled: processing }"
             ></button>
           </div>
-          <div class="modal-body">
-            <div class="form-floating mb-3">
-              <input
-                v-model="site.name"
-                type="text"
-                class="form-control"
-                :class="{ 'is-invalid': errors.name !== '' }"
-                id="floatingInput"
-                placeholder="site name"
-              />
-              <label for="floatingInput">Site</label>
-              <span
-                v-if="errors.name !== ''"
-                class="text-danger fst-italic fw-light"
-              >
-                {{ errors.name }}
-              </span>
-            </div>
+          <!--:validation-schema="schema" v-slot="{ errors }"-->
+          <form @submit="submitForm">
+            <div class="modal-body">
+              <div class="form-floating mb-3">
+                <Field
+                  name="name"
+                  v-model="site.name"
+                  type="text"
+                  class="form-control"
+                  :class="{
+                    'is-invalid': api_errors.name !== '' || errors.name,
+                  }"
+                  id="floatingInput"
+                  placeholder="site name"
+                />
+                <label for="floatingInput">Site</label>
+                <span
+                  v-if="api_errors.name !== '' || errors.name"
+                  class="text-danger fst-italic fw-light"
+                >
+                  {{ errors.name ?? api_errors.name }}
+                </span>
+              </div>
 
-            <div class="form-floating mb-3">
-              <textarea
-                v-model="site.description"
-                class="form-control"
-                :class="{ 'is-invalid': errors.description !== '' }"
-                placeholder="Desc"
-                id="floatingTextarea"
-              ></textarea>
-              <label for="floatingTextarea">Description</label>
-              <span
-                v-if="errors.description !== ''"
-                class="text-danger fst-italic fw-light"
-              >
-                {{ errors.description }}
-              </span>
+              <div class="form-floating mb-3">
+                <Field
+                  as="textarea"
+                  name="description"
+                  v-model="site.description"
+                  class="form-control"
+                  :class="{
+                    'is-invalid':
+                      api_errors.description !== '' || errors.description,
+                  }"
+                  placeholder="Desc"
+                  id="floatingTextarea"
+                />
+                <label for="floatingTextarea">Description</label>
+                <span
+                  v-if="api_errors.description !== '' || errors.description"
+                  class="text-danger fst-italic fw-light"
+                >
+                  {{ errors.description ?? api_errors.description }}
+                </span>
+              </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              @click="closeModal"
-              class="btn btn-sm btn-outline-secondary"
-              :class="{ disabled: processing }"
-            >
-              Annuler
-            </button>
-            <button
-              @click="soumettre"
-              type="button"
-              class="btn btn-sm"
-              :class="{
-                'btn-outline-success': operation === 'create',
-                'btn-outline-danger': operation === 'delete',
-                'btn-outline-info': operation === 'edit',
-                disabled: processing,
-              }"
-            >
-              <span
-                v-if="processing"
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-
-              <span v-if="operation === 'create'">
-                <i v-if="!processing" class="bi bi-plus-lg"></i> Ajouter</span
+            <div class="modal-footer">
+              <button
+                @click="closeModal"
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                :class="{ disabled: processing }"
+                aria-label="Close"
               >
-              <span v-if="operation === 'delete'">
-                <i v-if="!processing" class="bi bi-trash"></i> Supprimer
-              </span>
-              <span v-if="operation === 'edit'">
-                <i v-if="!processing" class="bi bi-floppy"></i> Modifier
-              </span>
-            </button>
-          </div>
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn btn-sm"
+                :class="{
+                  'btn-outline-success': operation === 'create',
+                  'btn-outline-danger': operation === 'delete',
+                  'btn-outline-info': operation === 'edit',
+                  disabled: processing,
+                }"
+              >
+                <span
+                  v-if="processing"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+
+                <span v-if="operation === 'create'">
+                  <i v-if="!processing" class="bi bi-plus-lg"></i> Ajouter</span
+                >
+                <span v-if="operation === 'delete'">
+                  <i v-if="!processing" class="bi bi-trash"></i> Supprimer
+                </span>
+                <span v-if="operation === 'edit'">
+                  <i v-if="!processing" class="bi bi-floppy"></i> Modifier
+                </span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -205,11 +217,40 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref, useTemplateRef } from "vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { API } from "@/utils";
+
+/**
+ * ************** VALIDATION START
+ */
+import { Form, Field, ErrorMessage, useForm } from "vee-validate";
+import * as yup from "yup";
+import { fr } from "yup-locales";
+import { setLocale } from "yup";
+setLocale(fr);
+
+// Define the form validation schema
+const schema = yup.object().shape({
+  name: yup.string().required().min(2),
+  description: yup.string().required().min(2),
+});
+
+// Use the useForm hook for validation
+const { errors, handleSubmit, resetForm, setErrors } = useForm({
+  validationSchema: schema,
+});
+
+// Handle form submission
+const submitForm = handleSubmit((values) => {
+  soumettre();
+});
+
+const operation = ref("");
+const delay = 500; // 0.5 seconds
+const processing = ref(false);
 
 const sites = ref([]);
 const site = ref({
@@ -217,16 +258,15 @@ const site = ref({
   name: "",
   description: "",
 });
+
 const search = ref("");
-const errors = ref({
+const api_errors = ref({
   name: "",
   description: "",
 });
-const operation = ref("");
-const delay = 2000; // 0.5 seconds
-const processing = ref(false);
 
 onMounted(() => {
+  resetForm();
   processing.value = true;
   setTimeout(() => {
     getSites();
@@ -311,24 +351,24 @@ const createSite = () => {
       });
     })
     .catch((error) => {
-      errors.value.name = "";
-      errors.value.description = "";
+      api_errors.value.name = "";
+      api_errors.value.description = "";
 
       if (error.response) {
         // 422 : data no valid
         if (error.response.status === 422) {
           if (error.response.data.errors.name) {
-            errors.value.name = error.response.data.errors.name[0];
+            api_errors.value.name = error.response.data.errors.name[0];
           }
           if (error.response.data.errors.description) {
-            errors.value.description =
+            api_errors.value.description =
               error.response.data.errors.description[0];
           }
           // 401 : Unauthorized
         } else if (error.response.status === 401) {
           console.log(error.response.data.message);
 
-          errors.value.name = error.response.data.message;
+          api_errors.value.name = error.response.data.message;
         } else {
           console.log(error.response);
         }
@@ -370,8 +410,8 @@ const updateSite = () => {
       });
     })
     .catch((error) => {
-      errors.value.name = "";
-      errors.value.description = "";
+      api_errors.value.name = "";
+      api_errors.value.description = "";
 
       if (error.response) {
         // 422 : data no valid
@@ -379,17 +419,17 @@ const updateSite = () => {
 
         if (error.response.status === 422) {
           if (error.response.data.errors.name) {
-            errors.value.name = error.response.data.errors.name[0];
+            api_errors.value.name = error.response.data.errors.name[0];
           }
           if (error.response.data.errors.description) {
-            errors.value.description =
+            api_errors.value.description =
               error.response.data.errors.description[0];
           }
           // 401 : Unauthorized
         } else if (error.response.status === 401) {
           console.log(error.response.data.message);
 
-          errors.value.name = error.response.data.message;
+          api_errors.value.name = error.response.data.message;
         } else {
           console.log(error.response);
         }
@@ -447,7 +487,7 @@ const closeModal = () => {
     description: "",
   };
   // reset errors
-  errors.value = {
+  api_errors.value = {
     name: "",
     description: "",
   };
@@ -456,5 +496,7 @@ const closeModal = () => {
     document.getElementById("verticalycentered")
   );
   myModal.hide();
+  // reset the form, valus and errors
+  resetForm();
 };
 </script>
