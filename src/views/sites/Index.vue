@@ -6,13 +6,6 @@
         <div class="d-flex justify-content-between">
           <div class=""><i class="bi bi-list"></i> liste des sites</div>
 
-          <span
-            v-if="processing"
-            class="spinner-border spinner-border-sm"
-            role="status"
-            aria-hidden="true"
-          ></span>
-
           <div class="d-flex gap-2">
             <button
               @click="selectSite('', 'create')"
@@ -21,6 +14,19 @@
               <i class="bi bi-plus-lg"></i>
             </button>
           </div>
+        </div>
+
+        <div class="d-flex gap-1">
+          <input
+            v-model="search"
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="Chercher..."
+            style="width: 200px"
+          />
+          <button @click="search = ''" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+          </button>
         </div>
       </div>
       <div class="card-body">
@@ -58,7 +64,15 @@
             </tbody>
             <tbody v-else>
               <tr class="text-center">
-                <td colspan="6">Loading...</td>
+                <td colspan="6">
+                  <span
+                    v-if="processing"
+                    class="spinner-border spinner-border-sm text-secondary"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Chargement...
+                </td>
               </tr>
             </tbody>
           </table>
@@ -191,7 +205,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -203,6 +217,7 @@ const site = ref({
   name: "",
   description: "",
 });
+const search = ref("");
 const errors = ref({
   name: "",
   description: "",
@@ -216,10 +231,6 @@ onMounted(() => {
   setTimeout(() => {
     getSites();
   }, delay);
-});
-
-onUpdated(() => {
-  // console.log("onUpdated");
 });
 
 const getSites = () => {
