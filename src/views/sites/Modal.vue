@@ -1,13 +1,15 @@
 <script setup>
+//#region 'IMPORTS'
 import { useSitesStore } from "@/stores/sites";
 const sitesStore = useSitesStore();
-import { Field, useForm } from "vee-validate";
-
-//#region 'IMPORTS'
-import "vue3-toastify/dist/index.css";
+import { Field, Form, useForm } from "vee-validate";
 import * as yup from "yup";
 import { fr } from "yup-locales";
 import { setLocale } from "yup";
+import { watch } from "vue";
+
+// CUSTOM COMPONENTS
+import Label from "@/components/commun/Label.vue";
 setLocale(fr);
 //#endregion
 
@@ -28,6 +30,14 @@ const submitForm = handleSubmit((values) => {
   sitesStore.submit();
 });
 //#endregion
+
+// Watcher for resetting the form when closed
+watch(
+  () => sitesStore.reset_form,
+  (newValue, oldValue) => {
+    resetForm();
+  }
+);
 </script>
 
 <template>
@@ -37,7 +47,6 @@ const submitForm = handleSubmit((values) => {
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
-    style="display: none"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-dialog-centered">
@@ -62,16 +71,17 @@ const submitForm = handleSubmit((values) => {
               <Field
                 name="name"
                 v-model="sitesStore.site.name"
-                type="text"
                 class="form-control"
                 :class="{
                   'is-invalid':
                     sitesStore.api_errors.name !== '' || errors.name,
                 }"
-                id="floatingInput"
-                placeholder="site name"
+                placeholder="Desc"
+                id="floatingTextarea"
+                rows="4"
+                style="height: 100%"
               />
-              <label for="floatingInput">Site</label>
+              <Label for="floatingTextarea" required>name</Label>
               <span
                 v-if="sitesStore.api_errors.name !== '' || errors.name"
                 class="text-danger fst-italic fw-light"
@@ -96,7 +106,7 @@ const submitForm = handleSubmit((values) => {
                 rows="4"
                 style="height: 100%"
               />
-              <label for="floatingTextarea">Description</label>
+              <Label for="floatingTextarea" required>Description</Label>
               <span
                 v-if="
                   sitesStore.api_errors.description !== '' || errors.description
