@@ -1,5 +1,5 @@
 <script setup>
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 </script>
 
@@ -117,7 +117,7 @@ const authStore = useAuthStore();
           <li class="message-item">
             <a href="#">
               <img
-                src="../assets/img/messages-1.jpg"
+                src="@/assets/img/messages-1.jpg"
                 alt=""
                 class="rounded-circle"
               />
@@ -138,7 +138,7 @@ const authStore = useAuthStore();
           <li class="message-item">
             <a href="#">
               <img
-                src="../assets/img/messages-2.jpg"
+                src="@/assets/img/messages-2.jpg"
                 alt=""
                 class="rounded-circle"
               />
@@ -159,7 +159,7 @@ const authStore = useAuthStore();
           <li class="message-item">
             <a href="#">
               <img
-                src="../assets/img/messages-3.jpg"
+                src="@/assets/img/messages-3.jpg"
                 alt=""
                 class="rounded-circle"
               />
@@ -192,7 +192,7 @@ const authStore = useAuthStore();
           data-bs-toggle="dropdown"
         >
           <img
-            src="../assets/img/profile-img.jpg"
+            src="@/assets/img/profile-img.jpg"
             alt="Profile"
             class="rounded-circle"
           />
